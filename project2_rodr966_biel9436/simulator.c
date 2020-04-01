@@ -22,7 +22,7 @@ int getDestReg(int mcInstruction);
 int getRegA(int mcInstruction);
 int getRegB(int mcInstruction);
 void print_state(statetype *stateptr);
-void print_stats(int totalInstructions);
+void print_stats(int totalInstructions, int totalCycles);
 void simulator(char *inputFile, char *outputFile);
 void add(statetype *stateptr);
 void nand(statetype *stateptr);
@@ -82,6 +82,7 @@ void simulator(char *inputFile, char *outputFile)
 	int mcInstruction = 0;
 	int lineNumber = 0;
 	int instructionCount = 0;
+	int cycles = 0;
 
 /*
 	if(outputFile != NULL){
@@ -120,19 +121,19 @@ void simulator(char *inputFile, char *outputFile)
 		//execute correct command based on opcode
 		if(opcode == 0){
 			add(&state);
-			instructionCount++;
+			cycles++;
 		}else if(opcode == 1){
 			nand(&state);
-			instructionCount++;
+			cycles++;
 		}else if(opcode == 2){
 			lw(&state);
-			instructionCount = instructionCount + 7;
+			cycles = cycles + 7;
 		}else if (opcode == 3){
 			sw(&state);
-			instructionCount = instructionCount + 7;
+			cycles = cycles + 7;
 		}else if(opcode == 4){
 			beq(&state);
-			instructionCount = instructionCount + 3;
+			cycles = cycles + 3;
 		}else if(opcode == 5){
 			jalr(&state);
 		}else if(opcode == 6){
@@ -146,7 +147,7 @@ void simulator(char *inputFile, char *outputFile)
 		instructionCount++;
 	}
 
-	print_stats(instructionCount);
+	print_stats(instructionCount, cycles);
 }
 
 void add(statetype *stateptr){
@@ -201,8 +202,9 @@ void jalr(statetype *stateptr){
 	stateptr->pc = stateptr->reg[regB] -1;
 }
 
-void print_stats(int totalInstructions){
+void print_stats(int totalInstructions, int totalCycles){
 	printf("INSTRUCTIONS: %i\n",totalInstructions);
+	printf("CYCLES: %d\n",totalCycles);
 }
 
 void print_state(statetype *stateptr){
