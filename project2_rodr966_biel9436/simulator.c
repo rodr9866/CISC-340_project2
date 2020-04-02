@@ -138,12 +138,15 @@ void simulator(char *inputFile, char *outputFile)
 			jalr(&state);
 		}else if(opcode == 6){
 			printf("Machine halted\n");
+			cycles++;
+			instructionCount++;
 			break;
 		}
 		//printf("Opcode: %i, RegA: %i, RegB: %i, Immediate: %i\n",getOpcode((&state)->mem[(&state)->pc]), getRegA((&state)->mem[(&state)->pc]),getRegB((&state)->mem[(&state)->pc]),getImmediate((&state)->mem[(&state)->pc]));
 
 
 		(&state)->pc++;
+		cycles++;
 		instructionCount++;
 	}
 
@@ -190,7 +193,15 @@ void beq(statetype *stateptr){
 	int offset = getImmediate(stateptr->mem[stateptr->pc]);
 
 	if((stateptr->reg[regA]) == (stateptr->reg[regB])){
+
+		if(stateptr->pc + offset < 0){
+			printf("ERROR: cannot branch to a negative Line: %i Offset: %i\n",stateptr->pc,stateptr->pc + offset);
+			exit(-1);
+		}
 		stateptr->pc = stateptr->pc + offset;
+
+
+
 	}
 }
 
